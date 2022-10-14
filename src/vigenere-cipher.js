@@ -20,13 +20,30 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(mode = true) {
+    this.mode = mode;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  encDec(oper, msg, key) {
+    if (!msg || !key) throw new Error("Incorrect arguments!");
+    key = key.toUpperCase();
+    let keyShift = 0;
+    const encDecArray = [...msg.toUpperCase()].map((c) => {
+      const letterPos = c.charCodeAt(0);
+      if (letterPos >= 65 && letterPos < 91) {
+        const shift = oper * (key.charCodeAt(keyShift++ % key.length) - 130);
+        const newLetterPos = (letterPos - shift) % 26;
+        return String.fromCharCode(newLetterPos + 65);
+      }
+      return c;
+    });
+    if (this.mode) return encDecArray.join("");
+    else return encDecArray.reverse().join("");
+  }
+  encrypt(msg, key) {
+    return this.encDec(-1, msg, key);
+  }
+  decrypt(msg, key) {
+    return this.encDec(1, msg, key);
   }
 }
 
